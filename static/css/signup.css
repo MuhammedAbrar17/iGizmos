@@ -1,0 +1,72 @@
+/*--/signup--*/
+.signup_grid_right {
+    padding-top: 4em;
+}
+
+.signup_grid_right input[type="text"],
+.signup_grid_right input[type="email"],
+.signup_grid_right input[type="password"],
+.signup_grid_right textarea {
+    outline: none;
+    padding: 15px 15px;
+    font-size: 14px;
+    color: #777;
+    background: #f7f7f7;
+    width: 100%;
+    letter-spacing: 1px;
+    border: 1px solid #ebeeef;
+}
+.signup_grid_right textarea {
+    min-height: 150px;
+    margin: 1em 0em;
+    resize: none;
+}
+
+.signup_grid_right input[type="submit"] {
+    outline: none;
+    padding: 20px 0;
+    font-size: 14px;
+    color: #fff;
+    background: #0e0f10;
+    border: none;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    -webkit-transition: 0.5s all;
+    -moz-transition: 0.5s all;
+    -o-transition: 0.5s all;
+    -ms-transition: 0.5s all;
+    transition: 0.5s all;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.signup_grid_right input[type="submit"]:hover {
+    background: #ff4e00;
+}
+
+.signup-left h4 {
+    color: #444;
+    font-size: 1em;
+    margin-bottom: .5em;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.signup-left p {
+    font-size: 1em;
+    letter-spacing: 1px;
+}
+
+.signup_grid_right h6,
+.signup-left h6 {
+    font-size: 1.2em;
+    color: #292b2c;
+    margin-bottom: 1.5em;
+    letter-spacing: 1px;
+    font-weight: 400;
+}
+.signup_grid_right title{
+    text-align: center;
+}
+
+

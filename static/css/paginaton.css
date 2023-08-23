@@ -1,0 +1,20 @@
+.pagination {
+    margin-top: 20px;
+    font-size: 16px;
+  }
+  
+  .pagination-link {
+    color: #333;
+    text-decoration: none;
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .pagination-link:hover {
+    background-color: #f4f4f4;
+    color: #555;
+  }
+  

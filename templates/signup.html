@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="static/css/signup.css">
+{% endblock extra_css %}
+{% block content %}
+<section class="banner-bottom-wthreelayouts py-lg-5 py-3">
+	{% if otp %}
+	<div class="container">
+		<div class="signup_grid_right" >
+			<div class="ittle-w3layouts text-center my-lg-4 my-4" style="text-align: center;"> E-mail OTP verification</div>
+			<p class="text-centure" style="text-align: center;"> Check your email for OTP</p>
+			<div class="content" style="display: flex; justify-content: center; align-items: center;">
+				<form method="post" action="{% url 'signup' %}" style="max-width: 500px; width: 100%;">
+					{% csrf_token %}
+					{% if messages %}
+						{% for message in messages %}
+						<div class="alert alert-warning alert-dismissible fade show" role="alert">
+							<strong></strong>{{message}}
+							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>
+						{% endfor %}
+					{% endif %}
+					<div class="user-details">
+						<div class="input-box">
+							<input type="hidden" name="email" value="{{usr.email}}">
+						</div>
+						<div class="input-box">
+							<input required minlength="4" maxlength="4" type="text" class="form-control" id="name" name="otp" placeholder="Enter Your OTP" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Your OTP'">
+						</div>
+						<div class="form-group">
+							<input type="submit" value="Confirm OTP">
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	{% else %}
+	<div class="container">
+		<h3 class="tittle-w3layouts text-center my-lg-4 my-4">Signup</h3>
+		<div class="inner_sec">
+			<div class="signup_grid_right" style="display: flex; justify-content: center; align-items: center;">
+				<form action="{% url 'signup' %}" method="post" onsubmit="return btnClick();" style="max-width: 800px; width: 100%;">
+					{% csrf_token %}
+					{% if messages %}
+					{% for message in messages %}
+					<div class="alert alert-warning alert-dismissible fade show" role="alert">
+						<strong></strong>{{message}}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>
+					{% endfor %}
+					{% endif %}
+					<div class="row signup_left_grid">
+						<div class="col-md-12 signup-left">
+							<div class="form-group">
+								<label class="my-2">Username</label>
+								<input class="form-control" type="text" name="Username" placeholder="" required="">
+							</div>
+							<div class="form-group">
+								<label class="my-2">First Name</label>
+								<input class="form-control" type="text" name="Firstname" placeholder="" required="">
+							</div>
+							<div class="form-group">
+								<label class="my-2">Last Name</label>
+								<input class="form-control" type="text" name="Lastname" placeholder="" required="">
+							</div>
+							<div class="form-group">
+								<label>Email</label>
+								<input class="form-control" type="email" name="email" placeholder="" required="">
+							</div>
+							<div class="form-group">
+								<label class="my-2">Password</label>
+								<input class="form-control" type="password" name="pass1" placeholder="" required="">
+							</div>
+							<div class="form-group">
+								<label class="my-2">Confirm Password</label>
+								<input class="form-control" type="password" name="pass2" placeholder="" required="">
+							</div>
+							<div class="form-group">
+								<input class="form-control" type="submit" value="Sign Up">
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+</section>
+{% block addscript %}
+<script>
+	// Form validation function
+	function btnClick() {
+		let status = true;
+		var Name = document.getElementById("fname").value.trim();
+		var lname = document.getElementById("lname").value.trim();
+		var username = document.getElementById("username").value.trim();
+		var mail = document.getElementById("email").value.trim();
+		var password = document.getElementById("pass1").value.trim();
+
+		if (Name === "" || mail === "" || username === "" || lname === "" || password === "") {
+			alert("Please fill all fields");
+			status = false;
+		} else if (!/^([a-zA-Z0-9\_.]+)@([a-zA-Z0-9]+).([a-z]+).([a-z]+)?$/.test(mail)) {
+			alert("Please re-check your email");
+			status = false;
+		}
+		return status;
+	}
+</script>
+{% endblock addscript %}
+{% endblock content %}

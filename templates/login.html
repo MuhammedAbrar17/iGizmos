@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/login.css">
+{% endblock extra_css %}
+{% block content %}
+<section class="banner-bottom-wthreelayouts py-lg-5 py-3">
+	<div class="container">
+		<h3 class="tittle-w3layouts text-center my-lg-4 my-4">Login</h3>
+		<div class="inner_sec">
+			<div class="login_grid_right d-flex justify-content-center align-items-center">
+				<form action="login" method="post" style="max-width: 500px; width: 100%;">
+					{% csrf_token %} ` {% if messages%} {% for message in messages%}
+					<div
+					class="alert alert-danger" role="alert"
+					>
+					  <strong></strong>{{message}}
+					  <button
+						type="button"
+						class="btn-close"
+						data-bs-dismiss="alert"
+						aria-label="Close"
+					  ></button>
+					</div>
+					{%endfor%} {%endif%}
+					
+					<div class="row login_left_grid">
+						<div class="col-md-12 login-left">
+							<div class="form-group">
+								<label class="my-2">Username</label>
+								<input class="form-control" type="text" name="username" placeholder="" required="">
+							</div>
+							<div class="form-group">
+								<label>Password</label>
+								<input class="form-control" type="password" name="password" placeholder="" required="">
+							</div>
+							<div class="form-group">
+								<input class="form-control" type="submit" value="Login">
+							</div>
+							<div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+								<div>
+									<a href="">Login with OTP</a>
+								</div>
+								<div>
+									<a href="{% url 'forgotpass' %}">Forgot password?</a>
+								</div>
+							</div>
+							<div>
+								<a class="btn btn-dark" href="{% url 'signup' %}">Signup</a>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</section>
+
+{% block addscript %}
+<script>
+	// Form validation function
+	function btnClick() {
+		let status = true;
+		var Name = document.getElementById("fname").value.trim();
+		var lname = document.getElementById("lname").value.trim();
+		var username = document.getElementById("username").value.trim();
+		var mail = document.getElementById("email").value.trim();
+		var password = document.getElementById("pass1").value.trim();
+
+		if (Name === "" || mail === "" || username === "" || lname === "" || password === "") {
+			alert("Please fill all fields");
+			status = false;
+		} else if (!/^([a-zA-Z0-9\_.]+)@([a-zA-Z0-9]+).([a-z]+).([a-z]+)?$/.test(mail)) {
+			alert("Please re-check your email");
+			status = false;
+		}
+		return status;
+	}
+</script>
+{% endblock addscript %}
+
+{% endblock content %}
