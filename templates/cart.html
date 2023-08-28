@@ -109,7 +109,7 @@
 							{% comment %} <td class="invert">&#8377;{{cart_item.grand_total}}</td> {% endcomment %}
 							<td class="invert">
 								<div class="rem">
-									<a href="{% url 'remove_cart_item' cart_item.product.id %}"><div class="close1"> </div></a>
+									<a href="{% url 'remove_cart_item' cart_item.product.id cart_item.variant.id %}"><div class="close1"> </div></a>
 								</div>
 
 							</td>
@@ -152,11 +152,11 @@
 					<a href = "{% url 'store' %}"><h4>Continue to basket</h4></a>
 					<ul style="border:1px solid black dashed;">
 						
-						<li>Total price
+						<li>subtotal price
 							<i>-</i>
 							<span style="color:black;">&#8377;{{total}}</span>
 						</li>
-							{% if cart.coupon %}
+						{% if cart.coupon %}
 						<li>Coupon discount
 							<i>-</i>
 							<span style="color: red;"> - {{ discount_amount }}</span>
@@ -167,10 +167,20 @@
 							<i>-</i>
 							<span>Free Delivery <del>99</del></span>
 						</li>
-						<li>Total
+						<li style="font-size: 1em;
+					color: #212121;
+					font-weight: 600;
+					padding: 1em 0;
+					border-top: 1px solid #DDD;
+					border-bottom: 1px solid #DDD;
+					margin: 2em 0 0;"><b>Total</b>
+						<i>-</i>
+						<span><b>&#8377;{{grand_total }}</b></span>
+					</li>
+						{% comment %} <li>Total
 							<i>-</i>
 							<span>&#8377;{{grand_total}}</span>
-						</li>
+						</li> {% endcomment %}
 					</ul>
 					<div class="checkout-right-basket">
 						<a href="{% url 'checkout' %}">Buy Now</a>

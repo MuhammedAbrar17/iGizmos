@@ -5,16 +5,25 @@ from store.models import product,Productimage,ProductVariant
 from django.contrib import messages
 from category.models import Brand
 from category.models import AdminCategory  
+from django.contrib.auth.decorators import login_required
+from authapp.views import *
+from authapp import *
 # Create your views here.
 
 # Product section
+@login_required(login_url='handle_login')
 def products(request):
+    if not request.user.is_superuser:
+        return redirect(handle_login)
     products = product.objects.all().filter(is_available=True)
     context = {
         'products': products,
     }
     return render(request,'adminpanel/page-products-grid-2.html',context)
+@login_required(login_url='handle_login')
 def add_product(request):
+    if not request.user.is_superuser:
+        return redirect(handle_login)
     
     if request.method == 'POST':
         image =''
@@ -71,7 +80,10 @@ def add_product(request):
     }
     return render(request, 'adminpanel/page-form-product-1.html', context)
 
+@login_required(login_url='handle_login')
 def edit_product(request, id):
+    if not request.user.is_superuser:
+        return redirect(handle_login)
     if request.method == "POST":
         image = ''
         try:
@@ -121,8 +133,10 @@ def edit_product(request, id):
 
     return render(request, "adminpanel/product-update.html", context)
 
-
+@login_required(login_url='handle_login')
 def delete_product(request, id):
+    if not request.user.is_superuser:
+        return redirect(handle_login)
     # Rename the model class to Product (uppercase)
     product_instance = product.objects.get(id=id)  # Use lowercase for the variable name
 
@@ -135,15 +149,19 @@ def delete_product(request, id):
 
 
 # add variant...............
-
+@login_required(login_url='handle_login')
 def variant(request):
+    if not request.user.is_superuser:
+        return redirect(handle_login)
     variant = ProductVariant.objects.all()
     context={
         'variant':variant
     }
     return render(request,'adminpanel/variant.html',context)
-
+@login_required(login_url='handle_login')
 def addvariant(request, id):
+    if not request.user.is_superuser:
+        return redirect(handle_login)   
     pr = product.objects.get(id=id)
     if request.method == 'POST':
         quantity = request.POST['quantity']

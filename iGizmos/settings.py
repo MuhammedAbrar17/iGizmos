@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'order',
     'admin_order',
     'offer',
+    'banners',
     
 ]
 
@@ -161,3 +162,8 @@ EMAIL_PORT=587
 EMAIL_USE_TLS=True
 EMAIL_HOST_USER= 'abuabrar520724@gmail.com'
 EMAIL_HOST_PASSWORD= 'ixyqjgwlvotsalya'
+
+
+#payment integration
+KEY ='rzp_test_3z5Y7NEii43MAy'
+KEY_SECRET = 'd0gANN8FtZEXA70NSKtUTZ2B'

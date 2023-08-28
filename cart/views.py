@@ -59,10 +59,11 @@ def remove_cart(request,product_id,variant_id):
         
     return redirect('cart')    
 
-def remove_cart_item(request,product_id):
+def remove_cart_item(request,product_id,variant_id):
     cart = Cart.objects.get(cart_id=_cart_id(request))
     products = get_object_or_404(product, id=product_id)
-    cart_item = CartItem.objects.get(product=products,cart=cart)
+    variant = ProductVariant.objects.get(id = variant_id)
+    cart_item = CartItem.objects.get(product=products,cart=cart,variant = variant)
     cart_item.delete()
     cart.coupon = None
     cart.save()
@@ -71,7 +72,7 @@ def remove_cart_item(request,product_id):
 
 def cart(request, total=0, quantity=0, cart_item=None,coupons = None):
 
-
+    discount_amount = 0 
     cart, created = Cart.objects.get_or_create(cart_id=_cart_id(request))
     cart_items = CartItem.objects.filter(cart=cart, is_active=True)
     coupons = Coupon.objects.all()
@@ -105,8 +106,8 @@ def cart(request, total=0, quantity=0, cart_item=None,coupons = None):
             if discount_amount > coupon.max_discount:
                 discount_amount = coupon.max_discount
 
-            subtotal = total
-            total -= discount_amount
+            subtotal = total    
+            grand_total -= discount_amount
 
             cart.coupon = coupon
             cart.save()
@@ -115,6 +116,7 @@ def cart(request, total=0, quantity=0, cart_item=None,coupons = None):
             print('out of try')
             messages.error(request, 'Coupon not found')
             return redirect('cart')    
+            
 
     context = {
         'total': total,
@@ -122,6 +124,8 @@ def cart(request, total=0, quantity=0, cart_item=None,coupons = None):
         'cart_items': cart_items,
         'grand_total':grand_total,
         'coupons': coupons,
+        'cart':cart,
+        'discount_amount':discount_amount,
         
     }
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import product,ProductVariant
-
+from.models import Productimage
 
 # Register your models here.
 class ProductAdmin(admin.ModelAdmin):
@@ -12,3 +12,4 @@ class VariationAdmin(admin.ModelAdmin):
 
 admin.site.register(product)
 admin.site.register(ProductVariant,VariationAdmin)
+admin.site.register(Productimage)

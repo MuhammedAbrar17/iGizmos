@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from .models import Wishlist
 from store.models import product
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -28,6 +29,11 @@ def add_wishlist(request,id):
         raise e
     return redirect('product_details',products.slug)
         
-        
+@login_required(login_url='handle_login')
+def delete_wishlist(request, id):
+    usr = request.user.id
+    product = Wishlist.objects.get(user = usr ,product = id)
+    product.delete()
+    return redirect(wishlist)        
         
         

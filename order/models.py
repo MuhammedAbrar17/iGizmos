@@ -5,6 +5,8 @@ from store.models import product
 import string
 import random
 from datetime import datetime
+from store.models import ProductVariant
+
 
 # Create your models here.
 def generate_order_id():
@@ -48,7 +50,7 @@ class Order(models.Model):
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL,null=True, blank=True)
     order_id = models.CharField(max_length=50, default=generate_order_id, unique=True)
     address = models.ForeignKey(UserAddress, on_delete=models.SET_NULL,null=True, blank=True)
-    order_total = models.FloatField
+    order_total = models.FloatField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=ORDER_STATUS, default='pending')
     coupon_discount = models.BigIntegerField(null=True,blank=True)
@@ -75,6 +77,7 @@ class OrderItem(models.Model):
     total = models.FloatField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=ORDER_STATUS, default='pending')
+    product_variant = models.ForeignKey(ProductVariant,on_delete=models.SET_NULL,null=True)
 
     def sub_total(self):
         return self.product_price * self.quantity

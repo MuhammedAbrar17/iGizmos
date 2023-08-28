@@ -102,3 +102,44 @@ def search_products(request):
 
     return render(request, 'shop.html', context)
 
+def filtered_products(request):
+    # Retrieve the filter options selected by the user from the URL query parameters
+    selected_categories = request.GET.getlist('category')
+    selected_brands = request.GET.getlist('brand')
+    
+
+
+    # Query the database to get the filtered products
+    filtered_products = product.objects.all().filter(is_available = True)
+    count = 0
+    c = 0
+    
+    if selected_categories:
+        filtered_products = filtered_products.filter(category__in=selected_categories)
+        c = filtered_products.count()
+        count += 1
+
+    if selected_brands:
+        filtered_products = filtered_products.filter(brand__in=selected_brands)
+        count += 1
+        c = filtered_products.count()
+    
+    if count == 0:
+        filtered_products = None
+
+    
+
+
+    categories = AdminCategory.objects.all()
+    brand = Brand.objects.all()
+
+    context = {
+        'products' : filtered_products,
+        'categories' : categories,
+        'brands' : brand,
+        'c' : c,
+        'f': True,
+    }
+
+    return render(request, 'shop.html', context)
+
