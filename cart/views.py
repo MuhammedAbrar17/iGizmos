@@ -28,6 +28,9 @@ def add_cart(request,product_id,variant_id):
     
     try:
         cart_item = CartItem.objects.get(product = products,cart = cart ,variant = variant)
+        # if ((variant.quantity)-(cart_item.quantity + 1)) < 0:
+        #     messages.warning(request,"Out of Stock")
+        #     return redirect('cart') 
         cart_item.quantity += 1 #cart_item.quantity = cart_item.quantity +1
         cart_item.save()
     except CartItem.DoesNotExist:

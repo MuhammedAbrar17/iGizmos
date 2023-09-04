@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Coupon
 from django.contrib import messages
@@ -30,3 +30,21 @@ def add_coupon(request):
         'coupons' : coupon,
     }
     return render(request, "adminpanel/coupon.html", context)
+
+
+
+def remove_coupon(request, coupon_id):
+    if request.method == "POST":
+        coupon = get_object_or_404(Coupon, id=coupon_id)
+        coupon_name = coupon.coupon_code
+        coupon.delete()
+        messages.success(request, f'Coupon "{coupon_name}" removed successfully')
+        return redirect('addcoupon')
+
+    # Handle GET request if needed (e.g., showing a confirmation page)
+    coupon = get_object_or_404(Coupon, id=coupon_id)
+    context = {
+        'coupon': coupon,
+    }
+    return render(request, "adminpanel/remove_coupon.html", context)
+

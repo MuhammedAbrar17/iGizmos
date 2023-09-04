@@ -135,11 +135,20 @@
                         <td><b>{{ coupon.max_discount }}</b></td>
                         <td><b>{{ coupon.min_amount }}</b></td>
                         <td><b>{{ coupon.expiry_date }}</b></td>
+                        <td>
+                          <a href="{% url 'remove_coupon' coupon.id %}" class="btn btn-danger btn-sm">Remove</a>
+                      </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                      <td colspan="7">No coupons available.</td>
+                  </tr>
 
                         
                       </tr>
                       {% endfor %}
                     </tbody>
+                    
                   </table>
                 </div>
               </div>

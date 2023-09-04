@@ -90,6 +90,7 @@ def payments(request, total = 0, pretotal=0):
         if order.coupon_discount:
             pretotal=total
             total -= order.coupon_discount
+            
 
         context = {
             'order' : order,
@@ -124,6 +125,7 @@ def place_order(request):
         if cart.coupon:
             
             discount_amount = total * cart.coupon.off_percent / 100
+            
 
             if discount_amount > cart.coupon.max_discount:
                 discount_amount = cart.coupon.max_discount
@@ -146,11 +148,19 @@ def place_order(request):
         data.address = address
         data.order_total = total
         data.coupon_discount = discount_amount
+        if cart.coupon:
+            data.coupon = cart.coupon
+    
         data.save()
         order = Order.objects.get(user = current_user, status=data.status, order_id=data.order_id)
         
         client = razorpay.Client(auth= ( settings.KEY, settings.KEY_SECRET ))
         payment = client.order.create({'amount' :total * 100 , 'currency' :'INR', 'payment_capture' : 1 })
+        
+        wallet, _ = Wallet.objects.get_or_create(user=request.user)
+        print('---------wallet ------------------>>',wallet)
+
+        
         
         
         
@@ -160,14 +170,16 @@ def place_order(request):
             'cart_items' : cart_items,
             'total' : total,
             'payment' : payment,
-            'discount_amount': discount_amount,
+            'discount_amount': discount_amount, 
+            'wallet' : wallet
+            
         }
         return render(request,'payment.html', context)
 
 @login_required(login_url='handle_login')    
 def my_orders(request):
     
-    myorders = OrderItem.objects.all().order_by('-created_at')
+    myorders = OrderItem.objects.filter(Q(user=request.user) & ~Q(status='pending')).order_by('-created_at')
     context = {
         "myorders":myorders,
     }
@@ -178,7 +190,8 @@ def my_orders(request):
 def cancel_orders(request, id):
      
     item = OrderItem.objects.get(id = id)
-    if(item.order.payment.payment_method != 'Cash on Delivery' and item.order.coupon_discount):
+    
+    if(item.order.payment.payment_method.method != 'Cash on Delivery' and item.order.coupon_discount):
         item.status = 'cancelled'
         quantity = item.quantity
         item.product_variant.quantity += quantity
@@ -227,7 +240,7 @@ def cancel_orders(request, id):
                 amount=round(amount)
             )
             messages.success(request, 'Amount credited in your wallet')       
-    elif item.order.payment.payment_method != 'Cash on Delivery' :
+    elif item.order.payment.payment_method.method != 'Cash on Delivery' :
         quantity = item.quantity
         item.product_variant.quantity += quantity
         item.status = 'cancelled'
@@ -391,6 +404,7 @@ def walletpayments(request, total=0, pretotal=0):
     if request.user.is_authenticated:
         user = request.user
         wallet, _ = Wallet.objects.get_or_create(user=request.user)
+        print('wallet >> ::---------------',wallet)
         # Check if the user has enough balance in their wallet
         if wallet.balance >= total:
             # Deduct the payment from the user's wallet balance
@@ -440,7 +454,7 @@ def walletpayments(request, total=0, pretotal=0):
 
                 # Reduce the product's stock
                 variant = ProductVariant.objects.get(id=cart_item.variant_id)
-                product = product.objects.get(id=cart_item.product.id)
+                products = product.objects.get(id=cart_item.product.id)
                 variant.quantity -= cart_item.quantity
                 variant.save()
                 

@@ -183,7 +183,7 @@
 													Wallet Balance: &#8377;{{ wallet.balance }}
 												</div>
 												<br>
-												{% if wallet.balance > total %}
+												{% if wallet.balance >= total %}
 												<div>
 													<a href="{% url 'wallet_payments' %}"><button class="btn  btn-dark font-weight-bold my-3 mx-3">Confirm Order</button></a>
 												</div>
@@ -194,7 +194,7 @@
 												{% endif %}
 
 											
-											
+										
 										</div>
 										<div class="col-md-6">
 										<div class="checkout-left row">

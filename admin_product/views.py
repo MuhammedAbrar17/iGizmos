@@ -8,6 +8,8 @@ from category.models import AdminCategory
 from django.contrib.auth.decorators import login_required
 from authapp.views import *
 from authapp import *
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 # Create your views here.
 
 # Product section
@@ -85,16 +87,22 @@ def edit_product(request, id):
     if not request.user.is_superuser:
         return redirect(handle_login)
     if request.method == "POST":
+        product_instance = product.objects.filter(id=id).first()
         image = ''
         try:
             image = request.FILES['image']
             images = request.FILES.getlist('images')
             print(image)
-            product_instance = product.objects.filter(id=id).first()
+            
             product_instance.image = image
             product_instance.save()
         except KeyError:
-            print('Hi')
+            print('NO image Uploded')
+            
+        images = request.FILES.getlist('images')
+        for image in images:
+            Productimage.objects.create(product = product_instance ,pr_images =image )
+    
 
         name = request.POST['name']
         slug = request.POST['slug']
@@ -147,6 +155,22 @@ def delete_product(request, id):
     return redirect(products)
 
 
+
+def delete_product_image(request,image_id):
+    if not request.user.is_superuser:
+        return JsonResponse({'message': 'Permission denied'},status =403)
+    
+    image_instance = get_object_or_404(Productimage,id = image_id)
+    product_id = image_instance.product.id    
+    # Delete the image file from storage(you may need to adjust this depending on your storage settengs)
+    image_instance.pr_images.delete(save=True)
+    
+    #Delete the image recode form the database
+    
+    image_instance.delete()
+    messages.success(request,   'Product image deleted')
+    return redirect( edit_product,product_id)
+    
 
 # add variant...............
 @login_required(login_url='handle_login')

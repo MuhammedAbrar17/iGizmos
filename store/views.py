@@ -1,5 +1,5 @@
 from django.shortcuts import render,get_object_or_404
-from store.models import product  
+from store.models import product,ProductVariant
 from wishlist.models import Wishlist
 from category.models import AdminCategory,Brand
 from django.db.models import Q
@@ -106,10 +106,12 @@ def filtered_products(request):
     # Retrieve the filter options selected by the user from the URL query parameters
     selected_categories = request.GET.getlist('category')
     selected_brands = request.GET.getlist('brand')
-    
+    min_price = request.GET.get('min_price')  # Get minimum price from query params
+    max_price = request.GET.get('max_price')  # Get maximum price from query params
 
 
     # Query the database to get the filtered products
+    # filteredproduct = ProductVariant.objects.all().filter(is_avilable = True)
     filtered_products = product.objects.all().filter(is_available = True)
     count = 0
     c = 0
@@ -126,6 +128,12 @@ def filtered_products(request):
     
     if count == 0:
         filtered_products = None
+        
+        
+    # if min_price and max_price:
+    #     filteredproduct = filteredproduct.filter(price__gte=min_price, price__lte=max_price)
+    #     count += 1
+    #     c = filteredproduct.count()    
 
     
 
@@ -135,6 +143,7 @@ def filtered_products(request):
 
     context = {
         'products' : filtered_products,
+        
         'categories' : categories,
         'brands' : brand,
         'c' : c,

@@ -26,7 +26,17 @@
 {% block content %}
 <section class="banner-bottom-wthreelayouts py-lg-5 py-3">
     <div class="container">
-        {% if not myorders %}
+      {% csrf_token %}
+                      {% if messages%}
+              {% for message in messages%}
+              <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong></strong>{{message}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+              {%endfor%}
+              {%endif%}
+
+      {% if not myorders %}
     
         <h1>Your Order list is empty</h1>
         <br>
@@ -38,7 +48,7 @@
         <br>
         <br>
     
-        {% else %}
+      {% else %}
         <div class="inner-sec-shop px-lg-4 px-3">
             <h3 class="tittle-w3layouts my-lg-4 mt-3">My Orders</h3>
             <div class="checkout-right">

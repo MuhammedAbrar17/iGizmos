@@ -54,6 +54,24 @@
               <br>
               <input class="btn btn-dark" type="submit" value="Apply Filters">
             </form>
+            <br>
+
+            {% comment %} <form action="{% url 'filtered_products' %}" method="GET">
+              <div class="price-filter">
+                  <label for="min_price">Min Price:</label>
+                  <input type="number" name="min_price" id="min_price" step="0.01" placeholder="">
+                  <br>
+                  <br>
+                  <label for="max_price">Max Price:</label>
+                  <input type="number" name="max_price" id="max_price" step="0.01" placeholder="">
+                  <br>
+                  <br>
+          
+                  <button type="submit" class="btn btn-dark">Apply</button>
+              </div>
+          </form> {% endcomment %}
+
+
             
             
           </div>
@@ -478,26 +496,26 @@
         </div> {% endcomment %}
         <!-- //slider -->
       </div>
-      <div class="col-md-12 text-center">
-        <div class="pagination">
-          <span class="step-links">
-            {% if products.has_previous %}
-              <a href="?page=1" class="pagination-link">&laquo; First</a>
-              <a href="?page={{ products.previous_page_number }}" class="pagination-link">Previous</a>
-            {% endif %}
-      
-            <span class="current">
-              Page {{ products.number }} of {{ products.paginator.num_pages }}.
+      <div class="col-md-12 text-center" style="margin-top: 20px;">
+        <div class="pagination" style="display: inline-block; background-color: #ffffff; padding: 10px; border-radius: 5px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);">
+            <span class="step-links">
+                {% if products.has_previous %}
+                    <a href="?page=1" class="pagination-link" style="color: ##000000; text-decoration: none; margin-right: 10px;">&laquo; First</a>
+                    <a href="?page={{ products.previous_page_number }}" class="pagination-link" style="color: ##000000; text-decoration: none;">Previous</a>
+                {% endif %}
+    
+                <span class="current" style="margin: 0 10px; font-weight: bold;">
+                    Page {{ products.number }} of {{ products.paginator.num_pages }}.
+                </span>
+    
+                {% if products.has_next %}
+                    <a href="?page={{ products.next_page_number }}" class="pagination-link" style="color: #000000; text-decoration: none;">Next</a>
+                    <a href="?page={{ products.paginator.num_pages }}" class="pagination-link" style="color: #000000; text-decoration: none; margin-left: 10px;">Last &raquo;</a>
+                {% endif %}
             </span>
-      
-            {% if products.has_next %}
-              <a href="?page={{ products.next_page_number }}" class="pagination-link">Next</a>
-              <a href="?page={{ products.paginator.num_pages }}" class="pagination-link">Last &raquo;</a>
-            {% endif %}
-          </span>
         </div>
-      </div>
-      
+    </div>
+    
     </div>
   </section>
 {% endblock %}
