@@ -1,0 +1,210 @@
+{% extends 'adminpanel/base.html' %}
+{% block content %}
+      <section class="content-main">
+        <div class="row">
+          <div class="col-9">
+            <div class="content-header">
+              <h2 class="content-title">Update variant</h2>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card mb-4">
+              <div class="card-header">
+                <h4>Basic</h4>
+              </div>
+              <div class="card-body">
+                <form method="POST" action="{% url 'editvariant' variant.id %}"  enctype="multipart/form-data">
+                  {% csrf_token %}{% if messages %}
+                  {% for message in messages %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                      <strong></strong>{{ message }}
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                  {% endfor %}
+                {% endif %}
+                  {% comment %} <div class="mb-4">
+                    <label for="product_name" class="form-label"
+                      >Product title</label
+                    >
+                    <input
+                      type="text"
+                      placeholder=" {{ variant.product.product_name }} "
+                      value=" {{ variant.product.product_name }} "
+                      class="form-control"
+                      id="product_name"
+                      name="name"
+                    />
+                  </div> {% endcomment %}
+                  <div class="mb-4">
+                    <label class="form-label">ram</label>
+                    <input
+                      type="text"
+                      placeholder="{{ variant.ram }}"
+                      value="{{ variant.ram }}"
+                      class="form-control"
+                      name="ram"
+                    />
+                  </div>
+                  <div class="mb-4">
+                    <label class="form-label">Storage</label>
+                    <input
+                      type="text"
+                      placeholder="{{ variant.storage }}"
+                      value="{{ variant.storage }}"
+                      class="form-control"
+                      name="storage"
+                    />
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <div class="mb-4">
+                        <label class="form-label">price</label>
+                        <div class="row gx-2">
+                          <input
+                            placeholder="&#8377;{{ variant.price }}"
+                            value="{{ variant.price }}"
+                            type="text"
+                            class="form-control"
+                            name="price"
+                          />
+                        </div>
+                      </div>
+                    </div> 
+                    <div class="col-lg-4">
+                      <div class="mb-4">
+                        <label class="form-label">Stock</label>
+                        <input
+                        placeholder="{{ variant.quantity }}" 
+                        value="{{ variant.quantity }}" 
+                          type="text"
+                          class="form-control"
+                          name="quantity"
+                        />
+                      </div>
+                    </div> 
+                    {% comment %} <div class="col-lg-4">
+                      <label class="form-label">Brand</label>
+                      <select class="form-select" name="brand">
+                      {% for brand in brands %}
+                        <option value="{{ brand.id }}">{{ brand.brand_name }}</option>
+                      {% endfor %}
+                      </select>
+                    </div> {% endcomment %}
+                  </div>
+                  {% comment %} <div class="col-sm-6 mb-3">
+                    <label class="form-label">Category</label>
+                    <select class="form-select" name="category">
+                      <option value="{{ product.category.id }}">{{ product.category.category_name }}</option>
+                      {% for category in categories %}
+                      <option value="{{ category.id }}">{{ category.category_name }}</option>
+                      {% endfor %}
+                      
+                    </select>
+                  </div> {% endcomment %}
+                  
+                  {% comment %} <div class="mb-4">
+                    <label class="form-label">Change Image</label>
+                    <img src="{{ product_instance.image.url }}" alt="" width="100">
+                    <input class="form-control" type="file" name="image" accept="image/*">
+                  </div>
+                  <div class="mb-4">
+                    <label class="form-label">Current Image</label>
+                    <img src="{{ product.image.url }}" alt="Current Product Image" width="100">
+                  </div>
+                  <div class="mb-4">  
+                    <label class="form-label">change Product Images</label>
+                    <input class="form-control" type="file" multiple name="images" accept="image/*"/>
+                  </div>
+                  <div class="mb-4">
+                    <label class="form-label">Current product Images</label>
+                    {% for image in product.product_images.all %}
+                    <div class="image-container">
+                      <img src="{{ image.pr_images.url }}" alt="Product Image" width="100">
+                      {% comment %} <button class="btn btn-danger delete-image" data-image-id="{{ image.id }}">Delete</button> {% endcomment %}
+                      {% comment %} <a href="{% url 'delete_product_image' image.id %}" class="btn btn-danger delete-image">Delete </a> {% endcomment %}
+                    {% comment %} </div>
+                    {% endfor %}
+                  </div> {% endcomment %} 
+                    <br>
+                  <button class="btn btn-md rounded font-sm hover-up" type="submit">
+                    Add
+                  </button>
+                </form>
+              </div>
+            </div>
+            <!-- card end// -->
+  
+          </div>
+          {% comment %} <div class="col-lg-3">
+            <div class="card mb-4">
+              <div class="card-header">
+                <h4>Media</h4>
+              </div>
+              <div class="card-body">
+                <div class="input-upload">
+                  <img
+                    src="/static/admin_assets/imgs/theme/upload.svg"
+                    alt=""
+                  />
+                  <input class="form-control" type="file" />
+                </div>
+              </div>
+            </div>
+            <!-- card end// -->
+            <div class="card mb-4">
+              <div class="card-header">
+                <h4>Organization</h4>
+              </div>
+              <div class="card-body">
+                <div class="row gx-2">
+                  <div class="col-sm-6 mb-3">
+                    <label class="form-label">Category</label>
+                    <select class="form-select">
+                      <option>select</option>
+                      {% for category in categories %}
+                      <option>{{ category.category_name }}</option>
+                      {% endfor %}
+                      
+                    </select>
+                  </div>
+          
+                  <div class="mb-4">
+                    <label for="product_name" class="form-label">Tags</label>
+                    <input type="text" class="form-control" />
+                  </div>
+                </div>
+                <!-- row.// -->
+              </div>
+            </div>
+            <!-- card end// -->
+          </div> {% endcomment %}
+        </div>
+      </section> 
+      <!-- content-main end// -->
+      <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+          <div class="col-sm-6">
+            <script>
+              document.write(new Date().getFullYear());
+            </script>
+            &copy; Nest - HTML Ecommerce Template .
+          </div>
+          <div class="col-sm-6">
+            <div class="text-sm-end">All rights reserved</div>
+          </div>
+        </div>
+      </footer>
+      {% endblock content %}
+    </main>
+    <script src="/static/admin_assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/static/admin_assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/static/admin_assets/js/vendors/select2.min.js"></script>
+    <script src="/static/admin_assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/static/admin_assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script
+      src="/static/admin_assets/js/main.js?v=1.1"
+      type="text/javascript"
+    ></script>
+  </body>
+</html>

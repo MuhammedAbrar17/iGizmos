@@ -99,9 +99,106 @@ def handle_logout(request):
     logout(request)
     return HttpResponseRedirect("/")
 
+
+def otp_login(request):
+    
+    if request.method=="POST":
+        get_otp = request.POST.get('otp')
+        if not get_otp:
+            email = request.POST.get('email')
+            try:
+                user = User.objects.get(email = email)
+            except:
+                messages.error(request,f"This is not a valid email id")
+                return redirect(otp_login)
+
+
+            if user is not None:
+                otp = int(random.randint(1000,9999))
+                profile = Profile(user = user, otp = otp)
+                profile.save()
+                mess=f'Hello\t{user.username},\nYour OTP to Login your account for iGizmos is {otp}\nThanks!'
+                send_mail(
+                "welcome to iGizmos Verify your Email for login",
+                mess,
+                settings.EMAIL_HOST_USER,
+                [user.email],
+                fail_silently=False
+                )   
+                return render(request,'otp_login.html',{'otp':True,'usr':user})
+        else:            
+            get_email = request.POST.get('email')
+            user = User.objects.get(email = get_email)
+            if get_otp == Profile.objects.filter(user=user).last().otp:
+                login(request, user)
+                messages.success(request,f'Successfully logined {user.email}')
+                Profile.objects.filter(user=user).delete()
+                return redirect('/')
+            else:
+               messages.warning(request,f'You Entered a wrong OTP')
+               return render(request,'otp_login.html',{'otp':True,'usr':user})
+    if request.user.is_authenticated:
+        return redirect('/')
+    
+    return render(request, 'otp_login.html')   
+
+
+
 @cache_control(no_cache=True,must_revalidate=True,no_store=True)
-def forgotpass(request):
-    return render(request,'forgotpass.html')
+def forgot_password(request):
+    if request.method=="POST":
+        get_otp = request.POST.get('otp')
+        if not get_otp:
+            email = request.POST.get('email')
+            try:
+                user = User.objects.get(email = email)
+            except:
+                messages.error(request,f"This is not a valid email id")
+                return redirect(forgot_password)
 
 
+            if user is not None:
+                otp = int(random.randint(1000,9999))
+                profile = Profile(user = user, otp = otp)
+                profile.save()
+                mess=f'Hello\t{user.username},\nYour OTP to resetting password for iGizmos account - {otp}\nThanks!'
+                send_mail(
+                "welcome to iGizmos Verify your Email for password resetting",
+                mess,
+                settings.EMAIL_HOST_USER,
+                [user.email],
+                fail_silently=False
+                )   
+                return render(request,'forgotpassword.html',{'otp':True,'usr':user})
+        else:            
+            get_email = request.POST.get('email')
+            user = User.objects.get(email = get_email)
+            if get_otp == Profile.objects.filter(user=user).last().otp:
+                Profile.objects.filter(user=user).delete()
+                return render(request, 'resetpassword.html',{'usr':user})
+            else:
+               messages.warning(request,f'You Entered a wrong OTP')
+               return render(request,'otp_login.html',{'otp':True,'usr':user})
+            
+    if request.user.is_authenticated:
+        return redirect('/')
+
+    return render(request, 'forgotpassword.html')
+ 
+@login_required(login_url='handle_login')
+def reset_password(request):
+    if  request.method == "POST":
+        pass1 = request.POST['password']
+        pass2 = request.POST["pass1"]
+
+        get_email = request.POST.get('email')
+        user = User.objects.get(email = get_email) 
+        if pass1 == pass2:
+            user.set_password(pass1)
+            user.save()
+            messages.success(request, 'Password succesfully changed')
+            return redirect('handle_login')
+        else:
+            messages.error(request, 'passwords not matching')
+            return redirect(reset_password)
         

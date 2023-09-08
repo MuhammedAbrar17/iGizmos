@@ -174,10 +174,10 @@ def delete_product_image(request,image_id):
 
 # add variant...............
 @login_required(login_url='handle_login')
-def variant(request):
+def variant(request,id):
     if not request.user.is_superuser:
         return redirect(handle_login)
-    variant = ProductVariant.objects.all()
+    variant = ProductVariant.objects.filter(product_id =id)
     context={
         'variant':variant
     }
@@ -205,7 +205,40 @@ def addvariant(request, id):
     
         
     return render(request, 'adminpanel/addvariant.html', {'product' : pr})
+
+
+def editvariant(request,id):
+    if not request.user.is_superuser:
+        return redirect(handle_login)
+    
+    if request.method =='POST':
+        quantity = request.POST['quantity']
+        price =request.POST['price']
+        ram =request.POST['ram']
+        storage=request.POST['storage']
         
+        variant = ProductVariant.objects.filter(id = id).update(
+                        
+            quantity = quantity,
+            price = price,
+            ram = ram,
+            storage =storage,
+        )
+        messages.success(request,'variant updated successfully')
+        
+    variant = ProductVariant.objects.get(id=id)
+    context ={
+        'variant':variant
+    }
+    
+    return render(request,'adminpanel/editvariant.html',context)     
+
+            
+        
+    
+    
+    
+   
 # category section...
 
 

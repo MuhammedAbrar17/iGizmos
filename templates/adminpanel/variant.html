@@ -63,6 +63,8 @@
 							<th>Price</th>
 							<th>ram</th>
 							<th>storage</th>
+							<th>Edit</th>
+							
 						</tr>
 					</thead>
 					<tbody>
@@ -92,7 +94,7 @@
 							<td class="invert">&#8377;{{var.price}}</td>
                             <td class="invert">{{var.ram}}</td>
                             <td class="invert">{{var.storage}}</td>
-							
+							<td><a href="{% url 'editvariant' var.id%}">Edit</a></td>
 							
 						</tr>
 						
