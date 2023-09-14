@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 import razorpay
 from decimal import Decimal
 from django.contrib import messages
+from checkout.views import checkout
 
 
 # Create your views here.
@@ -43,10 +44,12 @@ def payments(request, total = 0, pretotal=0):
         for cart_item in cart_items:
             
             product_price = 0
-           
-            product_price = cart_item.variant.price
+            if cart_item.product.offer:
+                product_price = cart_item.variant.get_offer_price()
+            else:
+                product_price = cart_item.variant.price
             product_variation = cart_item.variant
-            
+                
 
             orderitem = OrderItem(
                 user = request.user,
@@ -106,6 +109,7 @@ def payments(request, total = 0, pretotal=0):
 def place_order(request):
     if request.user.is_authenticated:
         current_user = request.user
+        
         total = 0
         discount_amount = None
         cart_items = CartItem.objects.filter(user=current_user)
@@ -115,31 +119,32 @@ def place_order(request):
             if cart_item.quantity > cart_item.variant.quantity :
                 print("cart item out of stock")
                 return redirect('cart')
-            # if cart_item.product.offer:
-            #     total += cart_item.sub_total_with_offer()
-            # elif cart_item.product.category.offer:
-            #     total += cart_item.sub_total_with_offer_category()
-           
-            total += (cart_item.variant.price * cart_item.quantity)
-        cart = Cart.objects.get(cart_id=_cart_id(request))
-        if cart.coupon:
+            if cart_item.product.offer:
+                total += cart_item.sub_total_with_offer()
             
-            discount_amount = total * cart.coupon.off_percent / 100
-            
+            else:
+                total += (cart_item.variant.price * cart_item.quantity)
+            cart = Cart.objects.get(cart_id=_cart_id(request))
+            if cart.coupon:
+                
+                discount_amount = total * cart.coupon.off_percent / 100
+                
 
-            if discount_amount > cart.coupon.max_discount:
-                discount_amount = cart.coupon.max_discount
+                if discount_amount > cart.coupon.max_discount:
+                    discount_amount = cart.coupon.max_discount
 
-            
-            total -= discount_amount
-            
+                
+                total -= discount_amount
+                
         
         if cart_count <= 0:
             return redirect('store')
 
         if request.method == "POST":
             addr = request.POST['address']
+            
             address = UserAddress.objects.get(id=addr)
+            
         else:
             address = UserAddress.objects.filter(user=current_user).order_by('-id').first() 
 
@@ -285,7 +290,7 @@ def pre_success(request):
 
 
 # for order confirmation page and adding payment details
-@login_required(login_url='handlelogin')
+@login_required(login_url='handle_login')
 def success(request, total = 0,pretotal = 0):
         
         payment_method = PaymentMethod.objects.get(id=2)
@@ -302,12 +307,11 @@ def success(request, total = 0,pretotal = 0):
         cart_items = CartItem.objects.filter(user=request.user)
         for cart_item in cart_items:
             product_price = 0
-            # if cart_item.product.offer:
-            #     product_price = cart_item.product.get_offer_price()
-            # elif cart_item.product.category.offer:
-            #     product_price = cart_item.product.get_offer_price_by_category()
-            # else:
-            product_price = cart_item.variant.price
+            if cart_item.product.offer:
+               product_price = cart_item.variant.get_offer_price()
+            
+            else:
+                product_price = cart_item.variant.price
             product_variation = cart_item.variant
             orderitem = OrderItem(
                 user = request.user,
@@ -399,7 +403,7 @@ def wallet(request):
 
     return render(request, "wallet.html", context)
 
-@login_required(login_url='handlelogin')
+@login_required(login_url='handl_elogin')
 def walletpayments(request, total=0, pretotal=0):
     if request.user.is_authenticated:
         user = request.user
@@ -428,12 +432,12 @@ def walletpayments(request, total=0, pretotal=0):
             cart_items = CartItem.objects.filter(user=user)
             for cart_item in cart_items:
                 product_price = 0
-                # if cart_item.product.offer:
-                #     product_price = cart_item.product.get_offer_price()
-                # elif cart_item.product.category.offer:
-                #     product_price = cart_item.product.get_offer_price_by_category()
-                # else:
-                product_price = cart_item.variant.price
+                
+                if cart_item.product.offer:
+                    product_price = cart_item.variant.get_offer_price() 
+               
+                else:
+                    product_price = cart_item.variant.price
                 product_variation = cart_item.variant
 
                 # Create an order item for each cart item
@@ -445,6 +449,7 @@ def walletpayments(request, total=0, pretotal=0):
                     payment=payment,
                     product_price=product_price,  # Assuming no offer for simplicity
                     quantity=cart_item.quantity,
+                    total = product_price * cart_item.quantity,
                     status='accepted',
                 )
                 order_item.save()

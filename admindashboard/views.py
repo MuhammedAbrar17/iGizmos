@@ -18,10 +18,61 @@ import calendar
 
 
 def admin_dashboard(request):
-    if request.user.is_authenticated and  request.user.is_superuser:
-        return render(request, "adminpanel/adminindex.html")
-    if not request.user.is_superuser:
-        return redirect(handle_login)
+    
+    if request.user.is_authenticated and request.user.is_superuser:
+
+        #filtering delivered item
+        delivered_item = OrderItem.objects.filter(status='Delivered')
+
+        revenue = 0
+        order_count = delivered_item.count()
+        product_count = product.objects.count()
+        category_count = AdminCategory.objects.count()
+        user_count = User.objects.count()
+
+        #calculating revenue
+        for item in delivered_item:
+            revenue += item.total   
+
+        recent_sale = OrderItem.objects.all().order_by('-id')[:5]
+
+        # sale report by month for graph
+        today = timezone.now().date()
+        five_months_ago = today - timedelta(days=150)
+        sales_report = (
+        OrderItem.objects
+        .annotate(month=TruncMonth('created_at'))
+        .filter(created_at__gte=five_months_ago, status='Delivered')
+        .values(month = F('month__month'))
+        .annotate(total_sales=Sum('product_price'), total_number_of_orders = Sum('quantity'))
+        .order_by('month')
+        )
+
+        for entry in sales_report:
+            entry['month_name'] = get_month_name(entry['month'])
+
+        
+
+        context = {
+            'revenue' : revenue,
+            'recent_sale' : recent_sale,
+            'order_count' : order_count,
+            'product_count' : product_count,
+            'category_count' : category_count,
+            'user_count' : user_count,
+            'sales_report' : sales_report,
+
+        }
+
+        return render(request, 'adminpanel/adminindex.html', context)
+    return render(request, 'adminpanel/index.html')
+
+
+def get_month_name(month_number):
+    if 1 <= month_number <= 12:
+        return calendar.month_name[month_number]
+    else:
+        return None
 
 
 #user details-----------

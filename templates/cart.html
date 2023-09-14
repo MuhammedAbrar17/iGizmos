@@ -104,8 +104,11 @@
 							<td class="invert">{{ cart_item.product.product_name}} 
 								({{ cart_item.variant.ram }})
 							</td>
-
+							{% if cart_item.product.offer %}
+							<td class="invert">&#8377;{{cart_item.variant.get_offer_price }}</td>
+							{% else %}
 							<td class="invert">&#8377;{{cart_item.variant.price}}</td>
+							{% endif %}
 							{% comment %} <td class="invert">&#8377;{{cart_item.grand_total}}</td> {% endcomment %}
 							<td class="invert">
 								<div class="rem">

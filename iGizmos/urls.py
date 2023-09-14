@@ -33,6 +33,6 @@ urlpatterns = [
     path('user_profile/', include('user_profile.urls')),
     path('order/', include('order.urls')),
     path('offer/',include('offer.urls')),
-   
+    path('banners/',include('banners.urls')),
    
 ] + static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)

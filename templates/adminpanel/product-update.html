@@ -92,7 +92,7 @@
                       
                     </select>
                   </div>
-                  {% comment %} <div class="col-sm-6 mb-3">
+                  <div class="col-sm-6 mb-3">
                     <label class="form-label">Offer</label>
                     <select class="form-select" name="offer">
                       <option {% if product.offer %}value="{{ product.offer.id }}"{% else %} value=""{%endif%}>{% if product.offer %}{{ product.offer.name }}{% else %}-----{%endif%}</option>
@@ -101,7 +101,7 @@
                       {% endfor %}
                         
                     </select>
-                  </div> {% endcomment %}
+                  </div>
                   <div class="mb-4">
                     <label class="form-label">Change Image</label>
                     <img src="{{ product_instance.image.url }}" alt="" width="100">

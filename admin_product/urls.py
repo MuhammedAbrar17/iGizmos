@@ -18,5 +18,7 @@ urlpatterns = [
     # path('deletebrand/<int:id>/',views.delete_brand, name='delete_brand'),
     path('delete-product-image/<int:image_id>/', views.delete_product_image, name='delete_product_image'),
     path('editvariant/<int:id>',views.editvariant,name='editvariant'),
+    path('search/', views.search_products_admin, name='search_products_admin'),
+    path('filtered-product-admin/', views.filtered_products_admin, name='filtered_products_admin'),
 ]
     

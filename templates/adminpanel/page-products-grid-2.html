@@ -21,29 +21,47 @@
                     </div>
                     {%endfor%} {%endif%}
                     <div>
-                        <a href="#" class="btn btn-light rounded font-md">variant's</a>
-                        <a href="#" class="btn btn-light rounded font-md">Import</a>
+                        
                         <a href="{% url 'addproduct' %}" class="btn btn-primary btn-sm rounded">Create new</a>
                     </div>
                 </div>
                 <header class="card card-body mb-4">
                     <div class="row gx-3">
-                        {% comment %} <div class="col-lg-4 col-md-6 me-auto">
-                            <input type="text" placeholder="Search..." class="form-control" />
-                        </div> {% endcomment %}
+                        <form action="{% url 'search_products_admin' %}" method="get">
+                        <div class="col-lg-4 col-md-6 me-auto">
+                            
+                            <input class="form-control" type="search" name="q" placeholder="Search here..." required="" id="search" value="{{ request.GET.q}}" />
+                            
+                            {% comment %} <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button> {% endcomment %}
+                        </div>
+                        <br>
+                        </form>
+                     <form style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;" action="/admindashboard/filtered-product-admin/" method="get">
                         <div class="col-lg-2 col-6 col-md-3">
-                            <select class="form-select">
+                            <select class="form-select" style="z-index: 100;" name="category">
                                 <option>All category</option>
-                                <option>Laptops</option>
+                                {% for category in categories %}
+                                <option  value={{category.id}}>{{ category.category_name }}</option>
+                               
+                                {% endfor %}
+                               
                             </select>
                         </div>
                         <div class="col-lg-2 col-6 col-md-3">
-                            <select class="form-select">
-                                <option>Latest added</option>
-                                <option>Cheap first</option>
-                                <option>Most viewed</option>
+                            <select class="form-select" name="brand">
+                                <option>All Brand</option>
+                                {% for brand in brands %}
+                                
+                                <option  value="{{brand.id}}">{{ brand.brand_name }}</option>
+                                
+                                {% endfor %}
                             </select>
                         </div>
+                        <div class="col-lg-2 col-6 col-md-3"> 
+                            <input class="btn btn-primary btn-sm rounded" type="submit" value="Apply Filters">
+                            
+                        </div>
+                    </form>
                     </div>
                 </header>
                 <!-- card-header end// -->
@@ -77,20 +95,7 @@
                     <!-- col.// -->
                 </div>
                 <!-- row.// -->
-                <div class="pagination-area mt-15 mb-50">
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-start">
-                            <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                            <li class="page-item"><a class="page-link" href="#">02</a></li>
-                            <li class="page-item"><a class="page-link" href="#">03</a></li>
-                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                            <li class="page-item"><a class="page-link" href="#">16</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
+                
             </section>
             <!-- content-main end// -->
             <footer class="main-footer font-xs">

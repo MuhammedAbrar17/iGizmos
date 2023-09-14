@@ -26,7 +26,8 @@ class UserProfile(models.Model):
     state = models.CharField(blank=True, max_length=20)
     country = models.CharField(blank=True, max_length=20)
     phone_no = models.CharField(blank=True, max_length=20)
-    
+    # referral_code = models.CharField(blank=True, max_length=200)
+    referral_codews = models.CharField(blank=True, max_length=200)
     
     
     def __str__(self):

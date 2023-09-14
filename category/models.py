@@ -1,4 +1,5 @@
 from django.db import models
+from offer.models import Offer
 
 
 
@@ -8,6 +9,7 @@ class AdminCategory(models.Model):  # Rename 'category' to 'AdminCategory'
     slug = models.SlugField(max_length=100, unique=True)
     cat_img = models.ImageField(upload_to='photos/categories', blank=True)
     is_available = models.BooleanField(default=True)
+    
 
     class Meta:
         verbose_name = 'category'

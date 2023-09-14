@@ -25,6 +25,7 @@ from django.core.paginator import EmptyPage,PageNotAnInteger,Paginator
 #     return render(request,'shop.html',context)
 
 def store(request):
+    variant = ProductVariant.objects.all()
     products = product.objects.all().filter(is_available = True )
     categories = AdminCategory.objects.all()
     brand = Brand.objects.all()
@@ -36,8 +37,7 @@ def store(request):
         'products' :  paged_products ,
         'categories' : categories,
         'brands' : brand,
-        
-        
+        'variant':variant
     }
    
     return render(request, 'shop.html', context)
@@ -59,7 +59,7 @@ def product_details(request, product_slug):
     except:
         pass
     
-            
+    
     context = {
         'single_product' : single_product,
         'selected_ram':single_product.productVariant.first().ram,
@@ -73,6 +73,14 @@ def product_details(request, product_slug):
             context['selected_ram'] = ram
             context['selected_variant'] = variant
             
+    # if single_product.offer:
+        
+    #     off_price = single_product.get_offer_price(context['selected_variant'])
+    #     offer_price = context['selected_variant'].price - off_price
+    #     context['offer_price'] = round(offer_price,0)
+        
+        
+        
     return render(request, 'single.html', context)
 
 
@@ -130,11 +138,7 @@ def filtered_products(request):
         filtered_products = None
         
         
-    # if min_price and max_price:
-    #     filteredproduct = filteredproduct.filter(price__gte=min_price, price__lte=max_price)
-    #     count += 1
-    #     c = filteredproduct.count()    
-
+    
     
 
 

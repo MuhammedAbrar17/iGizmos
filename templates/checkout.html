@@ -36,9 +36,21 @@
 		<div class="col-md-6 form-group">
 		<form action="{% url 'placeorder' %}" method="POST">
 			{% csrf_token %}	
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong></strong> {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                {% endfor %}
+                {% endif %}
+
 			<label>Address</label>
 			<br>
 			<select class="custom-select" name = "address">
+               
 				{% for address in addresses %}
 				<option value="{{ address.id }}">{{ address }},
 					<br>{{ address.house_name }}</option>
@@ -48,7 +60,9 @@
 			<br>
 			<br>
 			<div>
+                
 				<button class="btn btn-lg btn-block btn-danger font-weight-bold" type="submit">Place Order</button>
+                
 			</div>
 		</form>
 		</div>

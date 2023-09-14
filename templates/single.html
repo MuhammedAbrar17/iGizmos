@@ -69,8 +69,12 @@
             <div class="col-lg-8 single-right-left simpleCart_shelfItem">
               <h3>{{ single_product.product_name }}</h3>
               <p>
+                {% if single_product.offer %}
+                <span class="item_price">&#8377;{{selected_variant.get_offer_price}}</span>
+                <del><span class="item_price">&#8377;{{selected_variant.price}}</span></del>
+                {% else %}
                 <span class="item_price">&#8377;{{selected_variant.price}}</span>
-                <del></del>
+                {% endif %}
               </p>
               <div class="rating1">
                 <ul class="stars">

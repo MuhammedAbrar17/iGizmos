@@ -10,16 +10,89 @@ from authapp.views import *
 from authapp import *
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
+from offer.models import Offer
 # Create your views here.
+
+# search product admin
+def search_products_admin(request):
+    search_query = request.GET.get('q', '')
+
+    filtered_products = product.objects.filter(is_available=True)
+    c = 0
+    count = 0
+    if search_query:
+        count += 1
+        filtered_products = filtered_products.filter(
+            Q(product_name__icontains=search_query) |
+            Q(product_desc__icontains=search_query)
+        )
+        c = filtered_products.count()
+   
+
+    context = {
+        'products': filtered_products,
+        'c': c,
+        'f': True,
+    }
+
+    return render(request, 'adminpanel/page-products-grid-2.html', context)
+
+
+def filtered_products_admin(request):
+    # Retrieve the filter options selected by the user from the URL query parameters
+    selected_categories = request.GET.get('category')
+    selected_brands = request.GET.get('brand')
+   
+    
+
+    # Query the database to get the filtered products
+    # filteredproduct = ProductVariant.objects.all().filter(is_avilable = True)
+    filtered_products = product.objects.all().filter(is_available = True)
+    count = 0
+    c = 0
+    
+    if selected_categories:
+        filtered_products = filtered_products.filter(category__in=selected_categories)
+        c = filtered_products.count()
+        count += 1
+
+    if selected_brands:
+        filtered_products = filtered_products.filter(brand__in=selected_brands)
+        count += 1
+        c = filtered_products.count()
+    
+    if count == 0:
+        filtered_products = None
+        
+        
+    categories = AdminCategory.objects.all()
+    brand = Brand.objects.all()
+
+    context = {
+        'products' : filtered_products,
+        
+        'categories' : categories,
+        'brands' : brand,
+        'c' : c,
+        'f': True,
+    }
+
+    return render(request, 'adminpanel/page-products-grid-2.html', context)
+    
 
 # Product section
 @login_required(login_url='handle_login')
 def products(request):
     if not request.user.is_superuser:
         return redirect(handle_login)
+    categories = AdminCategory.objects.all()
+    brand = Brand.objects.all()
     products = product.objects.all().filter(is_available=True)
     context = {
         'products': products,
+        'categories' : categories,
+        'brands' : brand,
     }
     return render(request,'adminpanel/page-products-grid-2.html',context)
 @login_required(login_url='handle_login')
@@ -41,6 +114,7 @@ def add_product(request):
         brand = request.POST['brand']
         categor = request.POST['category']
         description = request.POST['desc']
+        offer = request.POST['offer']
        
         try:
              product.objects.get(product_name = name)
@@ -54,6 +128,9 @@ def add_product(request):
                         pass    
                 brand_instance = Brand.objects.get(id=brand)
                 category_instance = AdminCategory.objects.get(id=categor)
+                offer_instance = None
+                if offer:
+                    offer_instance = Offer.objects.get(id=offer)
 
                 product.objects.create(
                     product_name=name,
@@ -61,7 +138,8 @@ def add_product(request):
                     category=category_instance,
                     product_desc=description,
                     image=image,
-                    slug=slug
+                    slug=slug,
+                    offer=offer_instance,
                 ).save()
                 pr = product.objects.get(product_name = name)
                 for image in images:
@@ -75,10 +153,13 @@ def add_product(request):
 
     brands = Brand.objects.all()
     categories = AdminCategory.objects.all()
+    offers = Offer.objects.all()
 
     context = {
         'categories' : categories,
         'brands' : brands,
+        'offers' : offers,
+        
     }
     return render(request, 'adminpanel/page-form-product-1.html', context)
 
@@ -108,12 +189,17 @@ def edit_product(request, id):
         slug = request.POST['slug']
         brand = request.POST['brand']
         category = request.POST['category']
+        offer = request.POST['offer']
         # price = request.POST['price']
         # stock = request.POST['stock']
 
         if name == '':
             messages.error(request, "Product name can't be null")
             return redirect(edit_product)
+        
+        offer_instance = None
+        if offer:
+            offer_instance = Offer.objects.get(id=offer)
 
         brand_instance = Brand.objects.get(id=brand)
         category_instance = AdminCategory.objects.get(id=category)
@@ -123,13 +209,14 @@ def edit_product(request, id):
             brand=brand_instance,
             category=category_instance,
             slug=slug,
+            offer=offer_instance,
             # stock=stock,
             # price=price,
         )   
 
         messages.success(request, f'{name} updated successfully')
         return redirect('products')  # Replace 'products' with the correct URL name for the product listing page
-
+    offers = Offer.objects.all()
     product_instance = product.objects.get(id=id)
     brands = Brand.objects.all()
     categories = AdminCategory.objects.all()
@@ -137,6 +224,7 @@ def edit_product(request, id):
         "product": product_instance,
         'categories': categories,
         'brands': brands,
+        'offers' : offers,
     }
 
     return render(request, "adminpanel/product-update.html", context)
@@ -187,24 +275,31 @@ def addvariant(request, id):
     if not request.user.is_superuser:
         return redirect(handle_login)   
     pr = product.objects.get(id=id)
+    
     if request.method == 'POST':
         quantity = request.POST['quantity']
         price = request.POST['price']
         ram = request.POST['ram']
         storage=request.POST['storage']
         
+        
+            
         ProductVariant.objects.create(
             quantity = quantity,
             price = price,
             ram = ram,
             storage = storage,
+            
             product=pr,
         ).save()
         messages.success(request, 'variant added')
+        
+        
+            
     
     
         
-    return render(request, 'adminpanel/addvariant.html', {'product' : pr})
+    return render(request, 'adminpanel/addvariant.html', {'product' : pr, })
 
 
 def editvariant(request,id):
@@ -217,18 +312,23 @@ def editvariant(request,id):
         ram =request.POST['ram']
         storage=request.POST['storage']
         
+        
+      
+        
         variant = ProductVariant.objects.filter(id = id).update(
                         
             quantity = quantity,
             price = price,
             ram = ram,
             storage =storage,
+            
         )
         messages.success(request,'variant updated successfully')
-        
+    
     variant = ProductVariant.objects.get(id=id)
     context ={
-        'variant':variant
+        'variant':variant,
+        
     }
     
     return render(request,'adminpanel/editvariant.html',context)     
@@ -258,6 +358,8 @@ def add_category(request):
         if not all([name, slug]):
             messages.info(request, 'Some fields are empty')
             return redirect('add_category')
+        
+      
 
         try:
             AdminCategory.objects.get(category_name=name)
@@ -268,7 +370,7 @@ def add_category(request):
                 category_name=name,
                 slug=slug,
                 category_decs=description,
-                # cat_img=image,
+               
                 
             )
             category_instance.is_available = True
@@ -277,10 +379,11 @@ def add_category(request):
 
     if not request.user.is_authenticated or not request.user.is_superuser:
         return redirect('admin_dashboard')
-
+    offers = Offer.objects.all()
     categories = AdminCategory.objects.filter(is_available=True)
     context = {
         'categories': categories,
+        
     }
     return render(request, 'adminpanel/page-categories.html', context)
 
@@ -289,18 +392,24 @@ def edit_category(request, id):
         name = request.POST['name']
         slug = request.POST['slug']
         description = request.POST['desc']
+        
+        
+       
 
         category = AdminCategory.objects.filter(id=id).update(
             category_name=name,
             slug=slug,
             category_decs=description,
+           
         )
         messages.success(request,f'{name} updated successfully')
         return redirect(add_category)
 
     category = AdminCategory.objects.get(id=id)
+   
     context = {
         'category' : category,
+       
     }
     return render(request, "adminpanel/update-category.html", context)
 

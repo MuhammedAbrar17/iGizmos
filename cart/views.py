@@ -28,9 +28,9 @@ def add_cart(request,product_id,variant_id):
     
     try:
         cart_item = CartItem.objects.get(product = products,cart = cart ,variant = variant)
-        # if ((variant.quantity)-(cart_item.quantity + 1)) < 0:
-        #     messages.warning(request,"Out of Stock")
-        #     return redirect('cart') 
+        if ((variant.quantity)-(cart_item.quantity)) < 0:
+            messages.warning(request,"Out of Stock")
+            return redirect('cart') 
         cart_item.quantity += 1 #cart_item.quantity = cart_item.quantity +1
         cart_item.save()
     except CartItem.DoesNotExist:
@@ -81,12 +81,17 @@ def cart(request, total=0, quantity=0, cart_item=None,coupons = None):
     coupons = Coupon.objects.all()
     grand_total = 0
     for cart_item in cart_items:
-        total += (cart_item.variant.price * cart_item.quantity)
-        quantity += cart_item.quantity
-        grand_total = total
-        print("********************************varients :::::", cart_item.variant.ram)
         
+        if cart_item.product.offer:
+            total += cart_item.sub_total_with_offer()
+            print("...........................",total)
+        else:
+            total += (cart_item.variant.price * cart_item.quantity)
+            quantity += cart_item.quantity
+            grand_total = total
+            print("********************************varients :::::", cart_item.variant.ram)
         
+    grand_total = total  
     if request.method == "POST":
         coup = request.POST['search']
         print(coup)
@@ -109,7 +114,7 @@ def cart(request, total=0, quantity=0, cart_item=None,coupons = None):
             if discount_amount > coupon.max_discount:
                 discount_amount = coupon.max_discount
 
-            subtotal = total    
+              
             grand_total -= discount_amount
 
             cart.coupon = coupon

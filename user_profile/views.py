@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
-@login_required(login_url='handlelogin')
+@login_required(login_url='handle_login')
 def add_user_address(request):
     if request.method == "POST":
        name = request.POST['name']
@@ -55,7 +55,7 @@ def profile(request):
           return render(request, 'profile.html', context)
 
 
-@login_required(login_url='handlelogin')     
+@login_required(login_url='handle_login')     
 def edit_profile(request):
     if request.method == "POST":
         image = ''
