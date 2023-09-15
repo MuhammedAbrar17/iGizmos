@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-fxe^o8+$*4i$dc5v=8^1(om=j_o_cpk$6svr$c292pb)50#083
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '13.51.204.186']
 
 
 # Application definition
@@ -94,10 +94,10 @@ DATABASES = {
 
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'igizmos',
-        'USER': 'postgres',
+        'USER': 'abu',
         'PASSWORD': '332310',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '',
     }
     
 }
@@ -138,13 +138,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = '/static/'
 import os
 
-STATICFILES_DIRS =[
-    os.path.join(BASE_DIR,'static')
-]
+STATIC_URL = 'static/'
+if DEBUG:
 
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+    # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 #media file configaration
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR /'media'
